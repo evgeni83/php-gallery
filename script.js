@@ -1,60 +1,56 @@
 'use strict';
 
-let inputFields = $('input');
+let inputFields = $('input[type=file]');
 $('form').on('change', function () {
     if (inputFields.length < 5 && inputFields[inputFields.length - 1].files.length > 0) {
-        $('label').append(`<br><br><input type="file" name="myFile-${ inputFields.length }">`);
-        inputFields = $('input');
+        $('label').append(`<input type="file" name="myFile-${ inputFields.length }">`);
+        inputFields = $('input[type=file]');
     }
-})
-
+});
 
 $('button[type=submit]').on('click', function (event) {
     event.preventDefault();
 
     const photos = $('input[type="file"]'),
-        formdata = new FormData();
+        formdata = new FormData(document.querySelector('form'));
 
-    photos.each(function (index, photo) {
-        if (photo.files[0]) {
-            formdata.append(photo.name, photo.files[0].name);
+    for(let [name, value] of formdata) {
+        if (value.size === 0) formdata.delete(name);
+    }
+
+    let message;
+
+    $.ajax({
+        url: './upload_handler.php',
+        type: 'POST',
+        data: formdata,
+        dataType: 'text',
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            if (typeof response.error === 'undefined') {
+                document.querySelector('form').reset();
+                inputFields.each(function (index, element) {
+                    if (index !== 0) {
+                        $(element).remove();
+                    }
+                })
+                inputFields = $('input[type=file]');
+                message = response;
+            } else {
+                message = 'ОШИБКИ ОТВЕТА сервера: ' + response.error;
+            }
+            printMessage(".message", message);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            message = 'ОШИБКИ AJAX запроса: ' + textStatus;
+            printMessage(".message", message);
         }
     });
 
-    for (let key of formdata.keys()) {
-        console.log(`${key}: ${formdata.get(key)}`);
+    function printMessage (selector, message) {
+        const messageElement = $(selector);
+        if (messageElement.length > 0) messageElement.remove();
+        $('form').append(`<div class="message">${message}</div>`);
     }
-
-    $('form').trigger('submit');
-
-    // $.ajax({
-    //     url: '/index.php',
-    //     type: 'POST',
-    //     data: formdata,
-    //     // cache: false,
-    //     // dataType: 'text',
-    //     processData: false, // Не обрабатываем файлы (Don't process the files)
-    //     contentType: false, // Так jQuery скажет серверу что это строковой запрос
-    //     success: function (response) {
-    //
-    //         // Если все ОК
-    //
-    //         if (typeof response.error === 'undefined') {
-    //             // Файлы успешно загружены, делаем что нибудь здесь
-    //
-    //             console.log(response);
-    //             // выведем пути к загруженным файлам в блок '.ajax-respond'
-    //
-    //             // var files_path = respond.files;
-    //             // var html = '';
-    //             // $.each( files_path, function( key, val ){ html += val +'<br>'; } )
-    //             console.log('OK');
-    //         } else {
-    //             console.log('ОШИБКИ ОТВЕТА сервера: ' + response.error);
-    //         }
-    //     },
-    //     error: function (jqXHR, textStatus, errorThrown) {
-    //         console.log('ОШИБКИ AJAX запроса: ' + textStatus);
-    //     }
-    // });
 });

@@ -1,3 +1,10 @@
+<style>
+    body {
+        background-color: #fff;
+        color: #000;
+    }
+</style>
+
 <?php
 
 $uploadDirPath = $_SERVER['DOCUMENT_ROOT'] . "/upload/";

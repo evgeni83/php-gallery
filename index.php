@@ -1,39 +1,3 @@
-<?php
-
-echo '<pre>';
-print_r($_FILES);
-echo '</pre>';
-
-if (!empty($_FILES)) {
-    if (count($_FILES) === 1 && $_FILES[0]['size'] == 0) {
-        echo "Файл не выбран";
-    } else {
-        foreach ($_FILES as $file) {
-            if ($file['size'] > 0) {
-                if ($file['error'] > 0) {
-                    echo 'Ошибка';
-                } else {
-                    if (!($file["type"] === "image/jpeg" ||
-                        $file["type"] === "image/png" ||
-                        $file["type"] === "image/jpg")) {
-                        echo "<br>неверный формат файла";
-                    } else if ($file['size'] > 5242880) {
-                        echo "<br>слишком большой размер файла";
-                    } else {
-                        $uploadPath = $_SERVER['DOCUMENT_ROOT'] . '/upload/';
-                        move_uploaded_file($file['tmp_name'], $uploadPath . $file['name']);
-                        echo "<br>файл загружен!";
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-?>
-
-
 <!doctype html>
 <html lang="ru">
 <head>
@@ -53,7 +17,7 @@ if (!empty($_FILES)) {
 <br>
 <br>
 
-<form action="<?= $_SERVER['PHP_SELF'] ?>" method="post" enctype="multipart/form-data">
+<form enctype="multipart/form-data">
     <label>
         Загрузите картинку<br><br>
         размер: не более 5 МБайт<br>
