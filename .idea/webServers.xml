@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="72768a8f-0c96-44b6-9bb2-5fe149cd33a8" name="php.danevgen" url="http://php.danevgen.ru">
+        <fileTransfer rootFolder="/home/c/ci42086" accessType="SFTP" host="5.23.51.102" port="22" sshConfigId="c56b4bb2-3bcd-44f8-93a6-4453d448c6d5" sshConfig="ci42086@5.23.51.102:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
