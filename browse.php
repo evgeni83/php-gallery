@@ -1,55 +1,70 @@
-<style>
-    body {
-        background-color: #fff;
-        color: #000;
-    }
-</style>
-
 <?php
+require_once $_SERVER[ 'DOCUMENT_ROOT' ] . '/helper.php';
+$upload_path = get_upload_path();
 
-$uploadDirPath = $_SERVER['DOCUMENT_ROOT'] . "/upload/";
-$filesList = scandir($uploadDirPath);
-
-if (isset($_POST["del"])) {
-    foreach ($_POST as $key => $fileName) {
-        if ($key !== "del") {
-            foreach ($filesList as $i => $image) {
-                if ($fileName == $image) {
-                    unlink($uploadDirPath . $fileName);
-                }
-            }
-        };
+$files_list = scandir( $upload_path );
+if ( isset( $_POST[ "del" ] ) ) {
+    foreach ( $_POST as $file_name ) {
+        if ( in_array( $file_name, $files_list ) ) {
+            unlink( $upload_path . $file_name );
+        }
     };
 };
+
+function get_file_size( string $path_to_the_file ): string {
+    $file_size = filesize( $path_to_the_file );
+    if ( $file_size <= 10240 ) {
+        return $file_size . "b";
+    } else if ( $file_size > 10240 && $file_size <= 1048576 ) {
+        return round( $file_size / 1024 ) . "Kb";
+    } else {
+        return round( $file_size / 1048576 ) . "Mb";
+    }
+}
+
 ?>
-    <a href="/">Вернуться к странице загрузки</a>
-    <br>
-    <br>
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PHP Gallery | Browse images</title>
+    <style>
+        body {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+<a href="<?= get_url() ?>">Вернуться к странице загрузки</a>
+<br>
+<br>
 <?php
-$filesList = scandir($uploadDirPath);
+$files_list = array_diff(scandir( $upload_path, 0 ), array('..', '.'));
 
-unset($filesList[0], $filesList[1]);
+if ( !empty( $files_list ) ) { ?>
 
-if (!empty($filesList)) { ?>
-
-    <form action="<?= $_SERVER['PHP_SELF'] ?>"
+    <form action="<?= $_SERVER[ 'PHP_SELF' ] ?>"
           method="post"
           id="delForm"
           style="
             display:flex;
             flex-wrap: wrap;
-          "
-    >
+          ">
         <?php
-        asort($filesList);
-        foreach ($filesList as $fileName) {
+        foreach ( $files_list as $file_name ) {
             ?>
             <label style="margin-right: 10px">
-                <img src="<?= "/upload/" . $fileName ?>" alt="img" style="height: 200px;">
-                <p style="margin: 0;">Имя файла: <?= $fileName ?></p>
-                <p style="margin: 0;">Размер файла: <?php printFileSize($uploadDirPath . $fileName) ?></p>
-                <p style="margin: 0;">Дата загрузки: <?= date("d.m.Y", filemtime($uploadDirPath . $fileName)) ?> г.</p>
-                <input type="checkbox" name="image<?= $fileName ?>ToDel" value="<?= $fileName ?>">Удалить
+                <img src="<?= "/upload/" . $file_name ?>" alt="img" style="height: 200px;">
+                <p style="margin: 0;">Имя файла: <?= $file_name ?></p>
+                <p style="margin: 0;">Размер файла: <?= get_file_size( $upload_path . $file_name ) ?></p>
+                <p style="margin: 0;">Дата загрузки: <?= date( "d.m.Y", filemtime( $upload_path . $file_name ) ) ?>
+                    г.</p>
+                <span><input type="checkbox" name="image<?= $file_name ?>ToDel" value="<?= $file_name ?>">Удалить</span>
             </label>
             <br>
             <br>
@@ -63,17 +78,8 @@ if (!empty($filesList)) { ?>
     <br>
     <?php
 } else {
-    echo "Загруженных изображений нет";
+    echo "<div>Загруженных изображений нет</div>";
 };
-
-function printFileSize(string $pathToTheFile)
-{
-    $fileSize = filesize($pathToTheFile);
-    if ($fileSize <= 10240) {
-        echo $fileSize . "b";
-    } else if ($fileSize > 10240 && $fileSize <= 1048576) {
-        echo round($fileSize / 1024) . "Kb";
-    } else {
-        echo round($fileSize / 1048576) . "Mb";
-    }
-}
+?>
+</body>
+</html>
