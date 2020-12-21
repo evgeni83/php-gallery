@@ -1,17 +1,6 @@
 <?php
 require_once $_SERVER[ 'DOCUMENT_ROOT' ] . '/helper.php';
 $limits = get_limits();
-
-$input_accept = '';
-foreach ( $limits[ 'file_types' ] as $key => $file_type ) {
-    if ( $key < count( $limits[ 'file_types' ] ) - 1 ) {
-        $input_accept .= $file_type . ', ';
-    } else {
-        $input_accept .= $file_type;
-    }
-};
-
-
 ?>
 
 <!doctype html>
@@ -22,24 +11,20 @@ foreach ( $limits[ 'file_types' ] as $key => $file_type ) {
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>PHP Gallery</title>
-    <style>
-        body {
-            background-color: #fff;
-            color: #000;
-        }
-    </style>
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
 <br>
 <br>
 
 <form
+        class="upload-form"
         enctype="multipart/form-data"
-        data-input-accept="<?= $input_accept ?>"
-        data-upload-handler-url="<?= get_url('/upload_handler.php') ?>">
-    <div class="label">
-        Загрузите картинку<br><br>
-        размер: не более <?= round( $limits[ 'max_file_size' ] / ( 1024 ** 2 ), 2 ) ?> МБайт<br>
+        data-input-accept="<?= implode( $limits[ 'file_types' ], ', ' ) ?>"
+        data-upload-handler-url="<?= get_url( '/upload_handler.php' ) ?>">
+    <label class="label">
+        Загрузите не более <?= $limits[ 'max_files_amount' ] ?> картинок<br>
+        размер каждой: не более <?= round( $limits[ 'max_file_size' ] / ( 1024 ** 2 ), 2 ) ?> МБайт<br>
         разширение: <?php
         foreach ( $limits[ 'file_types' ] as $key => $file_type ) {
             $file_type = str_replace( 'image/', '', $file_type );
@@ -49,27 +34,28 @@ foreach ( $limits[ 'file_types' ] as $key => $file_type ) {
                 echo $file_type;
             }
         }
-        ?><br><br><br>
-        <div>
+        ?>
+        <div class="input-wrapper">
             <input
+                    class="input-files"
+                    multiple
                     type="file"
-                    name="myFile-0"
-                    accept="<?= $input_accept ?>">
+                    name="myFile[]"
+                    data-max-files-amount="<?= $limits[ 'max_files_amount' ] ?>"
+                    accept="<?= implode( $limits[ 'file_types' ], ', ' ) ?>">
         </div>
-        <br>
-    </div>
-    <br>
-    <button type="submit" name="upload">Загрузить</button>
-    <br>
+    </label>
+    <button class="upload-button"
+            type="submit"
+            name="upload">Загрузить
+    </button>
 </form>
-<br>
-<br>
-<a href="<?= get_url('/browse.php') ?>">Посмотреть загруженные фото</a>
 
+<a href="<?= get_url( '/browse.php' ) ?>">Посмотреть загруженные фото</a>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<script src="script.js"></script>
+<script src="js/script.js"></script>
 
 </body>
 </html>

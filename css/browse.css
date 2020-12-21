@@ -1,0 +1,22 @@
+body {
+    background-color: #fff;
+    color: #000;
+}
+
+.form-del {
+    display:flex;
+    flex-wrap: wrap;
+}
+
+.form-del__label {
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.form-del__image {
+    height: 200px;
+}
+
+.form-del__text {
+    margin: 0;
+}
