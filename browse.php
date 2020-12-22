@@ -11,17 +11,6 @@ if ( isset( $_POST[ "del" ] ) ) {
     }
 }
 
-function get_file_size( string $path_to_the_file ): string {
-    $file_size = filesize( $path_to_the_file );
-    if ( $file_size <= 10240 ) {
-        return $file_size . "b";
-    } else if ( $file_size > 10240 && $file_size <= 1048576 ) {
-        return round( $file_size / 1024 ) . "Kb";
-    } else {
-        return round( $file_size / 1048576 ) . "Mb";
-    }
-}
-
 ?>
 
 <!doctype html>

@@ -20,21 +20,16 @@ $limits = get_limits();
 <form
         class="upload-form"
         enctype="multipart/form-data"
-        data-input-accept="<?= implode( $limits[ 'file_types' ], ', ' ) ?>"
+        data-input-accept="<?= implode( ', ', $limits[ 'file_types' ] ) ?>"
         data-upload-handler-url="<?= get_url( '/upload_handler.php' ) ?>">
     <label class="label">
         Загрузите не более <?= $limits[ 'max_files_amount' ] ?> картинок<br>
         размер каждой: не более <?= round( $limits[ 'max_file_size' ] / ( 1024 ** 2 ), 2 ) ?> МБайт<br>
-        разширение: <?php
-        foreach ( $limits[ 'file_types' ] as $key => $file_type ) {
-            $file_type = str_replace( 'image/', '', $file_type );
-            if ( $key < count( $limits[ 'file_types' ] ) - 1 ) {
-                echo $file_type . ', ';
-            } else {
-                echo $file_type;
-            }
-        }
-        ?>
+        расширение: <?= str_replace(
+            'image/',
+            '',
+            implode( ', ', $limits[ 'file_types' ] )
+        ); ?>
         <div class="input-wrapper">
             <input
                     class="input-files"
@@ -42,7 +37,7 @@ $limits = get_limits();
                     type="file"
                     name="myFile[]"
                     data-max-files-amount="<?= $limits[ 'max_files_amount' ] ?>"
-                    accept="<?= implode( $limits[ 'file_types' ], ', ' ) ?>">
+                    accept="<?= implode( ', ', $limits[ 'file_types' ] ) ?>">
         </div>
     </label>
     <button class="upload-button"
@@ -50,7 +45,7 @@ $limits = get_limits();
             name="upload">Загрузить
     </button>
 </form>
-
+<div class="message"></div>
 <a href="<?= get_url( '/browse.php' ) ?>">Посмотреть загруженные фото</a>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"

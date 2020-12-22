@@ -41,8 +41,8 @@ foreach ( $files as $key => $file ) {
 
     if ( $file[ 'size' ] > $limits[ 'max_file_size' ] ) {
         $message_html = '<div>Ошибка! Размер файла "' . $file[ 'name' ] . '" равен ';
-        $message_html .= round( $file[ 'size' ] / ( 1024 ** 2 ), 2 );
-        $message_html .= ' МБайт. Размер не должен превышать ';
+        $message_html .= get_file_size($file['tmp_name']);
+        $message_html .= ' Размер не должен превышать ';
         $message_html .= round( $limits[ 'max_file_size' ] / ( 1024 ** 2 ), 2 );
         $message_html .= ' МБайт</div>';
         $response[ $key ] = $message_html;
